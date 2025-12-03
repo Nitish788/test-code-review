@@ -65,6 +65,12 @@ export function taskStats({ tasks, onRefresh }: TaskStatsProps) {
     cursor: "pointer",
   };
 
+  const getCompletionColor = (rate: number) => {
+    if (rate >= 80) return "#40c057"; // Green
+    if (rate >= 50) return "#fab005"; // Yellow
+    return "#fa5252"; // Red
+  };
+
   return (
     <div style={containerStyle}>
       <div style={statBoxStyle}>
@@ -92,7 +98,13 @@ export function taskStats({ tasks, onRefresh }: TaskStatsProps) {
         <div style={{ color: "#666" }}>Not Started</div>
       </div>
       <div style={statBoxStyle}>
-        <div style={{ fontSize: "24px", fontWeight: "bold", color: "#228be6" }}>
+        <div
+          style={{
+            fontSize: "24px",
+            fontWeight: "bold",
+            color: getCompletionColor(stats.completionRate),
+          }}
+        >
           {stats.completionRate}%
         </div>
         <div style={{ color: "#666" }}>Completion Rate</div>
