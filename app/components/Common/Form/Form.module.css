@@ -1,0 +1,173 @@
+.form {
+  padding: var(--mantine-spacing-md) 0;
+}
+
+.title {
+  margin-bottom: var(--mantine-spacing-lg);
+  font-size: var(--mantine-font-size-lg);
+  font-weight: 600;
+  color: var(--mantine-color-gray-9);
+}
+
+.formField {
+  margin-bottom: var(--mantine-spacing-lg);
+}
+
+.input {
+  margin-bottom: var(--mantine-spacing-lg);
+}
+
+.label {
+  display: block;
+  margin-bottom: var(--mantine-spacing-sm);
+  font-weight: 600;
+  color: var(--mantine-color-gray-9);
+  font-size: var(--mantine-font-size-sm);
+}
+
+.radioGroup {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: var(--mantine-spacing-sm);
+}
+
+.radioLabel {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  padding: var(--mantine-spacing-xs);
+  border-radius: var(--mantine-radius-sm);
+  transition: background-color 0.2s;
+}
+
+.radioLabel:hover {
+  background-color: var(--mantine-color-gray-0);
+}
+
+.radioInput {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.radioButton {
+  position: relative;
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--mantine-color-gray-4);
+  border-radius: 50%;
+  margin-right: var(--mantine-spacing-xs);
+  transition: all 0.2s;
+}
+
+.radioButton::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: var(--mantine-primary-color-filled);
+  transition: transform 0.2s;
+}
+
+.radioInput:checked + .radioButton {
+  border-color: var(--mantine-primary-color-filled);
+}
+
+.radioInput:checked + .radioButton::after {
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.radioInput:focus + .radioButton {
+  box-shadow: 0 0 0 2px var(--mantine-primary-color-light);
+}
+
+.radioText {
+  font-size: var(--mantine-font-size-sm);
+  color: var(--mantine-color-gray-9);
+  font-weight: 500;
+}
+
+.radioInput:checked ~ .radioText {
+  color: var(--mantine-color-gray-9);
+  font-weight: 500;
+}
+
+.select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid var(--mantine-color-gray-3);
+  border-radius: var(--mantine-radius-sm);
+  font-size: var(--mantine-font-size-sm);
+}
+
+.select:focus {
+  outline: none;
+  border-color: var(--mantine-color-blue-5);
+}
+
+.required {
+  color: var(--mantine-color-red-7);
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  padding: var(--mantine-spacing-xs);
+  border-radius: var(--mantine-radius-sm);
+  transition: background-color 0.2s;
+}
+
+.checkboxWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.checkboxInput {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.checkboxCustom {
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--mantine-color-gray-4);
+  border-radius: 4px;
+  margin-right: var(--mantine-spacing-sm);
+  position: relative;
+  transition: all 0.2s;
+}
+
+.checkboxInput:checked + .checkboxCustom {
+  background-color: var(--mantine-primary-color-filled);
+  border-color: var(--mantine-primary-color-filled);
+}
+
+.checkboxInput:checked + .checkboxCustom::after {
+  content: "";
+  position: absolute;
+  left: 5px;
+  top: 2px;
+  width: 4px;
+  height: 8px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.checkboxText {
+  font-size: var(--mantine-font-size-sm);
+  color: var(--mantine-color-gray-9);
+  font-weight: 500;
+}
+
+.checkboxLabel:hover .checkboxCustom {
+  border-color: var(--mantine-primary-color-filled);
+}

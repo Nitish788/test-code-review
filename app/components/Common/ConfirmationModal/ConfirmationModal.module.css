@@ -1,0 +1,14 @@
+.modal {
+  max-width: 360px;
+}
+
+.title {
+  font-weight: 600;
+  color: var(--mantine-color-gray-9);
+  padding-right: var(--mantine-spacing-xl);
+}
+
+.message {
+  line-height: 1.5;
+  color: var(--mantine-color-gray-6);
+}

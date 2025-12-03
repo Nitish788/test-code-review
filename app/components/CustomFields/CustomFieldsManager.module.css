@@ -1,0 +1,7 @@
+.existingFields {
+  padding: var(--mantine-spacing-md);
+  background-color: var(--mantine-color-gray-0);
+  border-radius: var(--mantine-radius-sm);
+  border: 1px solid var(--mantine-color-gray-3);
+  margin-bottom: var(--mantine-spacing-md);
+}

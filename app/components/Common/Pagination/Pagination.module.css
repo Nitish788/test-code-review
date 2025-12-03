@@ -1,0 +1,20 @@
+.pageButton {
+  min-width: 32px;
+  height: 32px;
+  padding: 0;
+  font-size: var(--mantine-font-size-sm);
+}
+
+.pageButton[data-disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.ellipsis {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  color: var(--mantine-color-gray-6);
+  font-size: var(--mantine-font-size-sm);
+}

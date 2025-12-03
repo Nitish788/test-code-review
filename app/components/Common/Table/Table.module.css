@@ -1,0 +1,75 @@
+.tableContainer {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--mantine-color-gray-3);
+  border-radius: var(--mantine-radius-sm);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.header {
+  background-color: var(--mantine-color-gray-0);
+  border-bottom: 2px solid var(--mantine-color-gray-3);
+}
+
+.headerCell {
+  padding: var(--mantine-spacing-sm) var(--mantine-spacing-md);
+  font-weight: 600;
+  color: var(--mantine-color-gray-9);
+  white-space: nowrap;
+}
+
+.row {
+  border-bottom: 1px solid var(--mantine-color-gray-2);
+  transition: background-color 0.1s ease;
+}
+
+.row:last-child {
+  border-bottom: none;
+}
+
+.row:hover {
+  background-color: var(--mantine-color-gray-0);
+}
+
+.row[data-clickable="true"] {
+  cursor: pointer;
+}
+
+.cell {
+  padding: var(--mantine-spacing-sm) var(--mantine-spacing-md);
+  vertical-align: middle;
+}
+
+.headerContent {
+  display: flex;
+  align-items: center;
+  gap: var(--mantine-spacing-xs);
+}
+
+.sortable {
+  cursor: pointer;
+  user-select: none;
+}
+
+.sortable:hover {
+  background-color: var(--mantine-color-gray-2);
+}
+
+.sortIconWrapper {
+  display: flex;
+  align-items: center;
+  color: var(--mantine-color-gray-7);
+}
+
+.sortIcon {
+  transition: transform 0.2s;
+}
+
+.sortable:hover .sortIcon {
+  color: var(--mantine-color-gray-7);
+}

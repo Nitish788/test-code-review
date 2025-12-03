@@ -1,0 +1,90 @@
+.form {
+  padding: var(--mantine-spacing-md) 0;
+}
+
+.formField {
+  margin-bottom: var(--mantine-spacing-lg);
+}
+
+.label {
+  display: block;
+  margin-bottom: var(--mantine-spacing-sm);
+  font-weight: 500;
+  color: var(--mantine-color-gray-9);
+  font-size: var(--mantine-font-size-sm);
+}
+
+.input {
+  margin-bottom: var(--mantine-spacing-lg);
+}
+
+.radioGroup {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: var(--mantine-spacing-sm);
+}
+
+.radioLabel {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  padding: var(--mantine-spacing-xs);
+  border-radius: var(--mantine-radius-sm);
+  transition: background-color 0.2s;
+}
+
+.radioLabel:hover {
+  background-color: var(--mantine-color-gray-0);
+}
+
+.radioInput {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.radioButton {
+  position: relative;
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--mantine-color-gray-4);
+  border-radius: 50%;
+  margin-right: var(--mantine-spacing-xs);
+  transition: all 0.2s;
+}
+
+.radioButton::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: var(--mantine-primary-color-filled);
+  transition: transform 0.2s;
+}
+
+.radioInput:checked + .radioButton {
+  border-color: var(--mantine-primary-color-filled);
+}
+
+.radioInput:checked + .radioButton::after {
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.radioInput:focus + .radioButton {
+  box-shadow: 0 0 0 2px var(--mantine-primary-color-light);
+}
+
+.radioText {
+  font-size: var(--mantine-font-size-sm);
+  color: var(--mantine-color-gray-7);
+}
+
+.radioInput:checked ~ .radioText {
+  color: var(--mantine-color-gray-9);
+  font-weight: 500;
+}
