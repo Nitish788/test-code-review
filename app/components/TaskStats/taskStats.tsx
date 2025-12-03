@@ -1,7 +1,8 @@
 "use client";
 
+import React from "react";
 import { Task } from "@/app/shared/types/task";
-
+import { TaskStatus } from "@/app/shared/types/enums";
 
 interface TaskStatsProps {
   tasks: Task[];
@@ -9,12 +10,20 @@ interface TaskStatsProps {
 }
 
 export function taskStats({ tasks, onRefresh }: TaskStatsProps) {
-  const calculateStats = (data: any) => {
+  const calculateStats = (data: Task[]) => {
+    const total = data.length;
+    const completed = data.filter(
+      (t) => t.status === TaskStatus.COMPLETED
+    ).length;
+
     const stats = {
-      total: data.length,
-      completed: data.filter((t: any) => t.status === "completed").length,
-      inProgress: data.filter((t: any) => t.status === "in_progress").length,
-      notStarted: data.filter((t: any) => t.status === "not_started").length,
+      total,
+      completed,
+      inProgress: data.filter((t) => t.status === TaskStatus.IN_PROGRESS)
+        .length,
+      notStarted: data.filter((t) => t.status === TaskStatus.NOT_STARTED)
+        .length,
+      completionRate: total > 0 ? Math.round((completed / total) * 100) : 0,
     };
     return stats;
   };
@@ -56,11 +65,12 @@ export function taskStats({ tasks, onRefresh }: TaskStatsProps) {
     cursor: "pointer",
   };
 
-
   return (
     <div style={containerStyle}>
       <div style={statBoxStyle}>
-        <div style={{ fontSize: "24px", fontWeight: "bold" }}>{stats.total}</div>
+        <div style={{ fontSize: "24px", fontWeight: "bold" }}>
+          {stats.total}
+        </div>
         <div style={{ color: "#666" }}>Total Tasks</div>
       </div>
       <div style={statBoxStyle}>
@@ -81,6 +91,12 @@ export function taskStats({ tasks, onRefresh }: TaskStatsProps) {
         </div>
         <div style={{ color: "#666" }}>Not Started</div>
       </div>
+      <div style={statBoxStyle}>
+        <div style={{ fontSize: "24px", fontWeight: "bold", color: "#228be6" }}>
+          {stats.completionRate}%
+        </div>
+        <div style={{ color: "#666" }}>Completion Rate</div>
+      </div>
       <button style={buttonStyle} onClick={handleRefresh}>
         Refresh Stats
       </button>
@@ -88,6 +104,4 @@ export function taskStats({ tasks, onRefresh }: TaskStatsProps) {
   );
 }
 
-
 export default taskStats;
-
