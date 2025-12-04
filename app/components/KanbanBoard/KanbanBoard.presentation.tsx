@@ -11,8 +11,9 @@ import {
   Skeleton,
   TextInput,
   MultiSelect,
+  Badge,
 } from "@mantine/core";
-import { IconPlus, IconTrash, IconSearch } from "@tabler/icons-react";
+import { IconPlus, IconTrash, IconSearch, IconCalendar } from "@tabler/icons-react";
 import { DragEvent } from "react";
 import styles from "./KanbanBoard.module.css";
 import type { ColumnConfig } from "./KanbanBoard.types";
@@ -164,6 +165,19 @@ export function KanbanBoardPresentation({
                         <Text size="xs" c="dimmed" className={styles.status}>
                           {task.status.replace("_", " ")}
                         </Text>
+                        {task.dueDate && (
+                          <Group gap="xs" mt={4}>
+                            <IconCalendar size={12} style={{ color: "#868e96" }} />
+                            <Text size="xs" c="dimmed">
+                              {task.dueDate}
+                            </Text>
+                          </Group>
+                        )}
+                        {task.storyPoints && (
+                          <Badge size="xs" variant="outline" mt={4}>
+                            {task.storyPoints} pts
+                          </Badge>
+                        )}
                       </div>
                       <Button
                         variant="subtle"

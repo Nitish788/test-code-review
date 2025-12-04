@@ -151,6 +151,12 @@ export function TaskTableContainer({
         bValue = String(bCustom);
       }
 
+      if (column === "storyPoints") {
+        const valA = Number(a.storyPoints || 0);
+        const valB = Number(b.storyPoints || 0);
+        return isAsc ? valA - valB : valB - valA;
+      }
+
       if (column === "priority") {
         const priorityA = PRIORITY_ORDER[aValue as keyof typeof PRIORITY_ORDER];
         const priorityB = PRIORITY_ORDER[bValue as keyof typeof PRIORITY_ORDER];
