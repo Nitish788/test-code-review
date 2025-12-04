@@ -50,6 +50,18 @@ export function TaskForm({
         placeholder: "0",
       },
       {
+        type: FieldType.TEXT,
+        name: "assignee",
+        label: "Assignee",
+        placeholder: "Enter assignee name",
+      },
+      {
+        type: FieldType.TEXT,
+        name: "tags",
+        label: "Tags",
+        placeholder: "Comma separated tags (e.g. frontend, bug)",
+      },
+      {
         type: FieldType.RADIO,
         name: "status",
         label: "Status",
@@ -106,6 +118,13 @@ export function TaskForm({
       status: String(values.status) as TaskStatus,
       dueDate: values.dueDate ? String(values.dueDate) : undefined,
       storyPoints: values.storyPoints ? Number(values.storyPoints) : undefined,
+      assignee: values.assignee ? String(values.assignee) : undefined,
+      tags: values.tags
+        ? String(values.tags)
+            .split(",")
+            .map((tag) => tag.trim())
+            .filter(Boolean)
+        : undefined,
       customFields: customFieldValues,
     });
   };
@@ -133,6 +152,8 @@ export function TaskForm({
             status: initialValues.status ?? TaskStatus.NOT_STARTED,
             dueDate: initialValues.dueDate ?? "",
             storyPoints: initialValues.storyPoints ?? 0,
+            assignee: initialValues.assignee ?? "",
+            tags: initialValues.tags?.join(", ") ?? "",
             ...(initialValues.customFields ?? {}),
           }
         }

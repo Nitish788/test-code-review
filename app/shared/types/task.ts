@@ -7,5 +7,7 @@ export interface Task {
   status: TaskStatus;
   dueDate?: string;
   storyPoints?: number;
+  assignee?: string;
+  tags?: string[];
   customFields?: Record<string, string | number | boolean>;
 }
