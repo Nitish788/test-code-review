@@ -157,6 +157,12 @@ export function TaskTableContainer({
         return isAsc ? valA - valB : valB - valA;
       }
 
+      if (column === "assignee") {
+        const valA = String(a.assignee || "");
+        const valB = String(b.assignee || "");
+        return isAsc ? valA.localeCompare(valB) : valB.localeCompare(valA);
+      }
+
       if (column === "priority") {
         const priorityA = PRIORITY_ORDER[aValue as keyof typeof PRIORITY_ORDER];
         const priorityB = PRIORITY_ORDER[bValue as keyof typeof PRIORITY_ORDER];

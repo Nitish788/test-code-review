@@ -24,6 +24,9 @@ export function taskStats({ tasks, onRefresh }: TaskStatsProps) {
       notStarted: data.filter((t) => t.status === TaskStatus.NOT_STARTED)
         .length,
       totalPoints: data.reduce((sum, t) => sum + (t.storyPoints || 0), 0),
+      activeAssignees: new Set(
+        data.filter((t) => t.assignee).map((t) => t.assignee)
+      ).size,
       overdue: data.filter((t) => {
         if (!t.dueDate || t.status === TaskStatus.COMPLETED) return false;
         return new Date(t.dueDate) < new Date();
@@ -113,6 +116,12 @@ export function taskStats({ tasks, onRefresh }: TaskStatsProps) {
           {stats.totalPoints}
         </div>
         <div style={{ color: "#666" }}>Total Points</div>
+      </div>
+      <div style={statBoxStyle}>
+        <div style={{ fontSize: "24px", fontWeight: "bold", color: "#15aabf" }}>
+          {stats.activeAssignees}
+        </div>
+        <div style={{ color: "#666" }}>Active Assignees</div>
       </div>
       <div style={statBoxStyle}>
         <div

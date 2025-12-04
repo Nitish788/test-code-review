@@ -12,8 +12,9 @@ import {
   TextInput,
   MultiSelect,
   Badge,
+  Avatar,
 } from "@mantine/core";
-import { IconPlus, IconTrash, IconSearch, IconCalendar } from "@tabler/icons-react";
+import { IconPlus, IconTrash, IconSearch, IconCalendar, IconUser } from "@tabler/icons-react";
 import { DragEvent } from "react";
 import styles from "./KanbanBoard.module.css";
 import type { ColumnConfig } from "./KanbanBoard.types";
@@ -177,6 +178,25 @@ export function KanbanBoardPresentation({
                           <Badge size="xs" variant="outline" mt={4}>
                             {task.storyPoints} pts
                           </Badge>
+                        )}
+                        {task.assignee && (
+                          <Group gap="xs" mt={4}>
+                            <Avatar size="xs" radius="xl" color="blue">
+                              {task.assignee.charAt(0).toUpperCase()}
+                            </Avatar>
+                            <Text size="xs" c="dimmed">
+                              {task.assignee}
+                            </Text>
+                          </Group>
+                        )}
+                        {task.tags && task.tags.length > 0 && (
+                          <Group gap={4} mt={4}>
+                            {task.tags.map((tag) => (
+                              <Badge key={tag} size="xs" variant="light" color="gray">
+                                {tag}
+                              </Badge>
+                            ))}
+                          </Group>
                         )}
                       </div>
                       <Button
