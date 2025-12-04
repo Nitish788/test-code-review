@@ -23,6 +23,11 @@ export function taskStats({ tasks, onRefresh }: TaskStatsProps) {
         .length,
       notStarted: data.filter((t) => t.status === TaskStatus.NOT_STARTED)
         .length,
+      totalPoints: data.reduce((sum, t) => sum + (t.storyPoints || 0), 0),
+      overdue: data.filter((t) => {
+        if (!t.dueDate || t.status === TaskStatus.COMPLETED) return false;
+        return new Date(t.dueDate) < new Date();
+      }).length,
       completionRate: total > 0 ? Math.round((completed / total) * 100) : 0,
     };
     return stats;
@@ -96,6 +101,18 @@ export function taskStats({ tasks, onRefresh }: TaskStatsProps) {
           {stats.notStarted}
         </div>
         <div style={{ color: "#666" }}>Not Started</div>
+      </div>
+      <div style={statBoxStyle}>
+        <div style={{ fontSize: "24px", fontWeight: "bold", color: "#e64980" }}>
+          {stats.overdue}
+        </div>
+        <div style={{ color: "#666" }}>Overdue</div>
+      </div>
+      <div style={statBoxStyle}>
+        <div style={{ fontSize: "24px", fontWeight: "bold", color: "#7950f2" }}>
+          {stats.totalPoints}
+        </div>
+        <div style={{ color: "#666" }}>Total Points</div>
       </div>
       <div style={statBoxStyle}>
         <div

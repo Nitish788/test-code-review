@@ -1,7 +1,7 @@
 "use client";
 
-import { Group, MultiSelect, TextInput } from "@mantine/core";
-import { IconSearch } from "@tabler/icons-react";
+import { Group, MultiSelect, TextInput, Button } from "@mantine/core";
+import { IconSearch, IconX } from "@tabler/icons-react";
 import { useMemo } from "react";
 import styles from "../TaskTable.module.css";
 
@@ -42,6 +42,14 @@ export function TaskTableControls({
     []
   );
 
+  const hasFilters = searchQuery || selectedPriorities.length > 0 || selectedStatuses.length > 0;
+
+  const handleClearFilters = () => {
+    onSearchChange("");
+    onPrioritiesChange([]);
+    onStatusesChange([]);
+  };
+
   return (
     <Group
       className={styles.controls}
@@ -74,6 +82,17 @@ export function TaskTableControls({
         clearable
         aria-label="Filter tasks by status"
       />
+      {hasFilters && (
+        <Button 
+          variant="subtle" 
+          color="gray" 
+          size="sm" 
+          onClick={handleClearFilters}
+          leftSection={<IconX size={14} />}
+        >
+          Clear
+        </Button>
+      )}
     </Group>
   );
 }

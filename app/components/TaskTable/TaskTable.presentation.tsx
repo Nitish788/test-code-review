@@ -48,6 +48,18 @@ export function TaskTablePresentation({
         sortable: true,
       },
       {
+        key: "storyPoints",
+        header: "Points",
+        render: (task: Task) => task.storyPoints || "-",
+        sortable: true,
+      },
+      {
+        key: "dueDate",
+        header: "Due Date",
+        render: (task: Task) => task.dueDate || "-",
+        sortable: true,
+      },
+      {
         key: "status",
         header: "Status",
         render: (task: Task) => (

@@ -7,18 +7,23 @@ const mockTasks: Task[] = [
     title: "Write project proposal",
     status: TaskStatus.IN_PROGRESS,
     priority: TaskPriority.HIGH,
+    dueDate: "2024-03-15",
+    storyPoints: 5,
   },
   {
     id: 2,
     title: "Fix login page bug",
     status: TaskStatus.NOT_STARTED,
     priority: TaskPriority.NONE,
+    storyPoints: 2,
   },
   {
     id: 3,
     title: "Design homepage layout",
     status: TaskStatus.IN_PROGRESS,
     priority: TaskPriority.MEDIUM,
+    dueDate: "2024-03-20",
+    storyPoints: 8,
   },
   {
     id: 4,
