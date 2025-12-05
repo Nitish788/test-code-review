@@ -12,6 +12,8 @@ interface TaskTableControlsProps {
   onPrioritiesChange: (values: string[]) => void;
   selectedStatuses: string[];
   onStatusesChange: (values: string[]) => void;
+  searchAssignee: string;
+  onSearchAssigneeChange: (value: string) => void;
 }
 
 export function TaskTableControls({
@@ -21,6 +23,8 @@ export function TaskTableControls({
   onPrioritiesChange,
   selectedStatuses,
   onStatusesChange,
+  searchAssignee,
+  onSearchAssigneeChange,
 }: TaskTableControlsProps) {
   const priorityOptions = useMemo(
     () => [
@@ -42,12 +46,13 @@ export function TaskTableControls({
     []
   );
 
-  const hasFilters = searchQuery || selectedPriorities.length > 0 || selectedStatuses.length > 0;
+  const hasFilters = searchQuery || selectedPriorities.length > 0 || selectedStatuses.length > 0 || searchAssignee;
 
   const handleClearFilters = () => {
     onSearchChange("");
     onPrioritiesChange([]);
     onStatusesChange([]);
+    onSearchAssigneeChange("");
   };
 
   return (
@@ -81,6 +86,14 @@ export function TaskTableControls({
         placeholder="Filter by status"
         clearable
         aria-label="Filter tasks by status"
+      />
+      <TextInput
+        className={styles.filterSelect}
+        placeholder="Filter by assignee"
+        value={searchAssignee}
+        onChange={(e) => onSearchAssigneeChange(e.target.value)}
+        leftSection={<IconSearch size={16} />}
+        aria-label="Filter tasks by assignee"
       />
       {hasFilters && (
         <Button 

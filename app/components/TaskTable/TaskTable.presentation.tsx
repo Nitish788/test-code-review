@@ -92,6 +92,13 @@ export function TaskTablePresentation({
           ),
       },
       {
+        key: "updatedAt",
+        header: "Last Updated",
+        render: (task: Task) =>
+          task.updatedAt ? new Date(task.updatedAt).toLocaleDateString() : "-",
+        sortable: true,
+      },
+      {
         key: "status",
         header: "Status",
         render: (task: Task) => (

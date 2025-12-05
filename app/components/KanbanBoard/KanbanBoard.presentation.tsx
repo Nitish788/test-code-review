@@ -198,6 +198,11 @@ export function KanbanBoardPresentation({
                             ))}
                           </Group>
                         )}
+                        {task.updatedAt && (
+                          <Text size="xs" c="dimmed" mt={4} style={{ fontSize: "10px" }}>
+                            Updated: {new Date(task.updatedAt).toLocaleDateString()}
+                          </Text>
+                        )}
                       </div>
                       <Button
                         variant="subtle"

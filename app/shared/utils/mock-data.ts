@@ -9,6 +9,8 @@ const mockTasks: Task[] = [
     priority: TaskPriority.HIGH,
     dueDate: "2024-03-15",
     storyPoints: 5,
+    createdAt: "2024-03-01T10:00:00Z",
+    updatedAt: "2024-03-02T14:30:00Z",
   },
   {
     id: 2,
@@ -16,6 +18,7 @@ const mockTasks: Task[] = [
     status: TaskStatus.NOT_STARTED,
     priority: TaskPriority.NONE,
     storyPoints: 2,
+    createdAt: "2024-03-05T09:15:00Z",
   },
   {
     id: 3,
