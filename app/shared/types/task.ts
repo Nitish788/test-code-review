@@ -9,5 +9,7 @@ export interface Task {
   storyPoints?: number;
   assignee?: string;
   tags?: string[];
+  createdAt?: string;
+  updatedAt?: string;
   customFields?: Record<string, string | number | boolean>;
 }
