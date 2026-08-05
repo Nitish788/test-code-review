@@ -27,6 +27,14 @@ import { KanbanBoard } from "../KanbanBoard";
 import { customFieldsStorage } from "@/app/shared/utils/custom-fields-storage";
 import { filterStorage } from "@/app/shared/utils/filter-storage";
 import { taskStats as TaskStats } from "../TaskStats/taskStats";
+import { BulkActionBar } from "../BulkActionBar";
+import { AssigneeWorkloadPanel } from "../AssigneeWorkloadPanel";
+import { BulkActionPayload } from "@/app/shared/types/bulk-action";
+import {
+  applyBulkAction,
+  mergeBulkResultIntoState,
+} from "@/app/shared/utils/bulk-task-ops";
+import { bulkSelectionStorage } from "@/app/shared/utils/bulk-selection-storage";
 
 export function TaskTableContainer({
   tasks: initialTasks,
@@ -84,11 +92,30 @@ export function TaskTableContainer({
   ] = useDisclosure(false);
 
   const [view, setView] = useState<"table" | "kanban">("table");
+  const [selectedIds, setSelectedIds] = useState<number[]>(() => {
+    try {
+      return bulkSelectionStorage.getSelection().selectedIds ?? [];
+    } catch {
+      return [];
+    }
+  });
 
   useHotkeys([
     ["mod+z", () => canUndo && undo()],
     ["mod+y", () => canRedo && redo()],
   ]);
+
+  useEffect(() => {
+    bulkSelectionStorage.setSelection({ selectedIds });
+  }, [selectedIds]);
+
+  const handleToggleSelect = (taskId: number) => {
+    setSelectedIds((prev) =>
+      prev.includes(taskId)
+        ? prev.filter((id) => id !== taskId)
+        : [...prev, taskId]
+    );
+  };
 
   const filteredTasks = useMemo(() => {
     if (view !== "table") return tasks;
@@ -115,6 +142,37 @@ export function TaskTableContainer({
     const endIndex = startIndex + pageSize;
     return filteredTasks.slice(startIndex, endIndex);
   }, [filteredTasks, currentPage, pageSize]);
+
+  const handleToggleSelectAll = (checked: boolean) => {
+    if (checked) {
+      const pageIds = paginatedTasks.map((t) => t.id);
+      setSelectedIds((prev) => Array.from(new Set([...prev, ...pageIds])));
+    } else {
+      const pageIdSet = new Set(paginatedTasks.map((t) => t.id));
+      setSelectedIds((prev) => prev.filter((id) => !pageIdSet.has(id)));
+    }
+  };
+
+  const handleBulkApply = (action: BulkActionPayload) => {
+    const snapshot = tasks;
+    const result = applyBulkAction(snapshot, selectedIds, action);
+    const next = mergeBulkResultIntoState(snapshot, result);
+    setTasks(next);
+    tasksStorage.setTasks(next);
+    addToHistory(next);
+    notifications.show({
+      title: "Bulk action applied",
+      message: `${result.affectedIds.length} task(s) updated`,
+      color: "green",
+      icon: <IconCheck size={16} />,
+    });
+    setSelectedIds(selectedIds);
+    bulkSelectionStorage.setSelection({
+      selectedIds,
+      lastAction: action,
+      lastAppliedAt: result.appliedAt,
+    });
+  };
 
   const handleSort = (column: string) => {
     const isAsc = sortColumn === column && sortDirection === "asc";
@@ -428,6 +486,8 @@ export function TaskTableContainer({
 
       <TaskStats tasks={tasks} onRefresh={() => console.log("refreshing stats...")} />
 
+      <AssigneeWorkloadPanel tasks={tasks} />
+
       <TaskTableHistory
         canUndo={canUndo}
         canRedo={canRedo}
@@ -447,6 +507,14 @@ export function TaskTableContainer({
             searchAssignee={searchAssignee}
             onSearchAssigneeChange={handleAssigneeSearchChange}
           />
+          <BulkActionBar
+            tasks={tasks}
+            selectedIds={selectedIds}
+            onSelectionChange={setSelectedIds}
+            onApply={handleBulkApply}
+            pageIndex={currentPage - 1}
+            pageSize={pageSize}
+          />
           <TaskTablePresentation
             tasks={paginatedTasks}
             onEdit={handleEditTask}
@@ -455,6 +523,9 @@ export function TaskTableContainer({
             sortDirection={sortDirection}
             onSort={handleSort}
             customFields={customFields}
+            selectedIds={selectedIds}
+            onToggleSelect={handleToggleSelect}
+            onToggleSelectAll={handleToggleSelectAll}
           />
           <TaskTablePagination
             currentPage={currentPage}
