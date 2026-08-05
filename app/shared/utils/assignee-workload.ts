@@ -33,7 +33,7 @@ export function groupTasksByAssignee(tasks: Task[]): Map<string, Task[]> {
   const groups = new Map<string, Task[]>();
 
   for (const task of tasks) {
-    const key = task.assignee.toLowerCase();
+    const key = (task.assignee?.trim() || "unassigned").toLowerCase();
     const list = groups.get(key) ?? [];
     list.push(task);
     groups.set(key, list);

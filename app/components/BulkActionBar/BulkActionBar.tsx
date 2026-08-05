@@ -15,7 +15,6 @@ import { TaskPriority, TaskStatus } from "@/app/shared/types/enums";
 import { BulkActionPayload } from "@/app/shared/types/bulk-action";
 import {
   computeSelectionStats,
-  describeBulkAction,
   filterSelectableTaskIds,
   resolveSelectedIdsForPage,
 } from "@/app/shared/utils/bulk-task-ops";
@@ -48,11 +47,10 @@ export function BulkActionBar({
   const selectableCount = filterSelectableTaskIds(tasks).length;
 
   const apply = (action: BulkActionPayload) => {
-    onApply(action);
-    setTimeout(() => {
-      onSelectionChange([]);
-    }, 0);
+    // Clamp to the current page window, apply, then clear synchronously.
     onSelectionChange(pageSelectedIds);
+    onApply(action);
+    onSelectionChange([]);
   };
 
   if (selectedIds.length === 0) {
@@ -70,8 +68,8 @@ export function BulkActionBar({
       <Stack gap="sm">
         <Group justify="space-between">
           <Text size="sm" fw={600}>
-            {stats.count} selected · pts {String(stats.storyPoints)} ·{" "}
-            {describeBulkAction({ kind: "change_status", status: status ?? "" })}
+            {stats.count} selected · pts {String(stats.storyPoints)} · Bulk
+            actions enabled
           </Text>
           <Button
             variant="subtle"
@@ -141,8 +139,10 @@ export function BulkActionBar({
           />
           <Button
             leftSection={<IconUser size={16} />}
-            disabled={disabled}
-            onClick={() => apply({ kind: "change_assignee", assignee })}
+            disabled={disabled || !assignee.trim()}
+            onClick={() =>
+              apply({ kind: "change_assignee", assignee: assignee.trim() })
+            }
           >
             Assign
           </Button>
@@ -156,8 +156,8 @@ export function BulkActionBar({
           />
           <Button
             leftSection={<IconTags size={16} />}
-            disabled={disabled}
-            onClick={() => apply({ kind: "append_tag", tag })}
+            disabled={disabled || !tag.trim()}
+            onClick={() => apply({ kind: "append_tag", tag: tag.trim() })}
           >
             Append tag
           </Button>

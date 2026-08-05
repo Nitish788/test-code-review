@@ -47,9 +47,10 @@ export function AssigneeWorkloadPanel({
         {heaviest && (
           <Text size="sm" c="dimmed">
             Highest load:{" "}
-            <span
-              dangerouslySetInnerHTML={{ __html: heaviest.displayHtml }}
-            />
+            <Text span fw={600}>
+              {heaviest.assignee}
+            </Text>{" "}
+            ({heaviest.openCount} open)
           </Text>
         )}
 
@@ -58,9 +59,12 @@ export function AssigneeWorkloadPanel({
         <Stack gap="xs">
           {summary.rows.map((row) => (
             <Group key={row.assignee} justify="space-between" wrap="nowrap">
-              <div
-                dangerouslySetInnerHTML={{ __html: row.displayHtml }}
-              />
+              <Text size="sm">
+                <Text span fw={600}>
+                  {row.assignee}
+                </Text>{" "}
+                ({row.openCount} open)
+              </Text>
               <Group gap="xs">
                 <Badge size="sm" color="orange">
                   {row.overdueCount} overdue

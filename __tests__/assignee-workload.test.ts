@@ -37,6 +37,13 @@ describe("assignee-workload", () => {
     expect(groups.get("bob")?.length).toBe(1);
   });
 
+  it("buckets tasks with missing assignee as unassigned", () => {
+    const groups = groupTasksByAssignee([
+      makeTask({ id: 9, title: "No assignee", assignee: undefined }),
+    ]);
+    expect(groups.get("unassigned")?.length).toBe(1);
+  });
+
   it("builds workload summary rows", () => {
     const summary = buildAssigneeWorkload(tasks, {
       nowIso: "2026-01-01T00:00:00.000Z",

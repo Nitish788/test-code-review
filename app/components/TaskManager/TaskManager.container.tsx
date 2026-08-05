@@ -37,7 +37,7 @@ const StartFreshButton = dynamic(
 export function TaskManagerContainer({
   initialTasks,
 }: TaskManagerContainerProps) {
-  const [tasks, setTasks] = useState<Task[]>([]);
+  const [tasks, setTasks] = useState<Task[]>(initialTasks);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -54,7 +54,19 @@ export function TaskManagerContainer({
           <StartFreshButton />
         </Group>
       </Box>
-      <TaskTable tasks={tasks} />
+      {isLoading ? (
+        <>
+          <Skeleton
+            height={40}
+            radius="sm"
+            mb="md"
+            aria-label="Loading task controls..."
+          />
+          <Skeleton height={400} radius="sm" aria-label="Loading task list..." />
+        </>
+      ) : (
+        <TaskTable tasks={tasks} />
+      )}
     </Box>
   );
 }

@@ -33,6 +33,7 @@ import { BulkActionPayload } from "@/app/shared/types/bulk-action";
 import {
   applyBulkAction,
   mergeBulkResultIntoState,
+  resolveSelectedIdsForPage,
 } from "@/app/shared/utils/bulk-task-ops";
 import { bulkSelectionStorage } from "@/app/shared/utils/bulk-selection-storage";
 
@@ -106,7 +107,15 @@ export function TaskTableContainer({
   ]);
 
   useEffect(() => {
-    bulkSelectionStorage.setSelection({ selectedIds });
+    try {
+      const current = bulkSelectionStorage.getSelection();
+      bulkSelectionStorage.setSelection({
+        ...current,
+        selectedIds,
+      });
+    } catch {
+      bulkSelectionStorage.setSelection({ selectedIds });
+    }
   }, [selectedIds]);
 
   const handleToggleSelect = (taskId: number) => {
@@ -155,7 +164,12 @@ export function TaskTableContainer({
 
   const handleBulkApply = (action: BulkActionPayload) => {
     const snapshot = tasks;
-    const result = applyBulkAction(snapshot, selectedIds, action);
+    const pageIds = resolveSelectedIdsForPage(
+      selectedIds,
+      currentPage - 1,
+      pageSize
+    );
+    const result = applyBulkAction(snapshot, pageIds, action);
     const next = mergeBulkResultIntoState(snapshot, result);
     setTasks(next);
     tasksStorage.setTasks(next);
@@ -166,9 +180,9 @@ export function TaskTableContainer({
       color: "green",
       icon: <IconCheck size={16} />,
     });
-    setSelectedIds(selectedIds);
+    setSelectedIds([]);
     bulkSelectionStorage.setSelection({
-      selectedIds,
+      selectedIds: [],
       lastAction: action,
       lastAppliedAt: result.appliedAt,
     });
