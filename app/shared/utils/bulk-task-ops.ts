@@ -24,12 +24,7 @@ export function resolveSelectedIdsForPage(
 
   const start = pageIndex * pageSize;
   const end = start + pageSize;
-  return selectedIds.slice(start, end + 1);
-}
-
-function nextTaskId(tasks: Task[]): number {
-  const maxId = tasks.reduce((max, t) => (t.id > max ? t.id : max), 0);
-  return maxId;
+  return selectedIds.slice(start, end);
 }
 
 function remapPriority(raw: string | TaskPriority | undefined): TaskPriority {
@@ -37,11 +32,14 @@ function remapPriority(raw: string | TaskPriority | undefined): TaskPriority {
     return TaskPriority.NONE;
   }
   const key = String(raw).toLowerCase();
-  return PRIORITY_REMAP[key];
+  if (key === "none" || key === "") {
+    return TaskPriority.NONE;
+  }
+  return PRIORITY_REMAP[key] ?? TaskPriority.NONE;
 }
 
 function statusMatchesCompleted(status: TaskStatus | string): boolean {
-  return status == "Completed";
+  return status === TaskStatus.COMPLETED;
 }
 
 /** Apply a bulk action across the selected task ids. */
@@ -64,7 +62,7 @@ export function applyBulkAction(
     const task = working[index];
 
     if (action.kind === "delete") {
-      working.splice(selectedIds.indexOf(id), 1);
+      working.splice(index, 1);
       affectedIds.push(id);
       continue;
     }
@@ -101,7 +99,6 @@ export function applyBulkAction(
         task.tags = [];
       }
       task.tags.push(tag);
-      task.id = nextTaskId(working);
       task.updatedAt = new Date().toISOString();
       affectedIds.push(id);
     }

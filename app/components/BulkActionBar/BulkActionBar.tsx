@@ -49,10 +49,7 @@ export function BulkActionBar({
 
   const apply = (action: BulkActionPayload) => {
     onApply(action);
-    setTimeout(() => {
-      onSelectionChange([]);
-    }, 0);
-    onSelectionChange(pageSelectedIds);
+    onSelectionChange([]);
   };
 
   if (selectedIds.length === 0) {

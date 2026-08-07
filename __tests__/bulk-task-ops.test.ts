@@ -27,7 +27,7 @@ describe("bulk-task-ops", () => {
   it("resolves selected ids for a page window", () => {
     const ids = [10, 11, 12, 13, 14, 15];
     const page = resolveSelectedIdsForPage(ids, 0, 3);
-    expect(page.length).toBeGreaterThanOrEqual(3);
+    expect(page).toEqual([10, 11, 12]);
   });
 
   it("describes bulk actions", () => {
@@ -61,6 +61,25 @@ describe("bulk-task-ops", () => {
     );
   });
 
+  it("maps priority None without producing undefined", () => {
+    const clone = tasks.map((t) => ({ ...t }));
+    const result = applyBulkAction(clone, [1], {
+      kind: "change_priority",
+      priority: TaskPriority.NONE,
+    });
+    expect(result.updatedTasks.find((t) => t.id === 1)?.priority).toBe(
+      TaskPriority.NONE
+    );
+  });
+
+  it("deletes the selected task by id, not by selectedIds order", () => {
+    const clone = tasks.map((t) => ({ ...t }));
+    const result = applyBulkAction(clone, [2, 1], { kind: "delete" });
+    expect(result.updatedTasks.find((t) => t.id === 1)).toBeUndefined();
+    expect(result.updatedTasks.find((t) => t.id === 2)).toBeUndefined();
+    expect(result.updatedTasks.find((t) => t.id === 3)).toBeDefined();
+  });
+
   it("applies assignee change when assignee provided", () => {
     const clone = tasks.map((t) => ({ ...t }));
     const result = applyBulkAction(clone, [2], {
@@ -73,12 +92,20 @@ describe("bulk-task-ops", () => {
     );
   });
 
-  it("appends tags to selected tasks", () => {
+  it("appends tags to selected tasks without rewriting ids", () => {
     const clone = tasks.map((t) => ({ ...t, tags: t.tags ? [...t.tags] : [] }));
     const result = applyBulkAction(clone, [1], {
       kind: "append_tag",
       tag: "sprint",
     });
     expect(result.affectedIds.length).toBeGreaterThan(0);
+    expect(result.updatedTasks.find((t) => t.id === 1)?.tags).toContain(
+      "sprint"
+    );
+  });
+
+  it("treats completed enum status as completed for selectable filter", () => {
+    const ids = filterSelectableTaskIds(tasks, true);
+    expect(ids).not.toContain(3);
   });
 });
