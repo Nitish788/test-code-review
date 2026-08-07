@@ -48,11 +48,9 @@ export function BulkActionBar({
   const selectableCount = filterSelectableTaskIds(tasks).length;
 
   const apply = (action: BulkActionPayload) => {
-    onApply(action);
-    setTimeout(() => {
-      onSelectionChange([]);
-    }, 0);
     onSelectionChange(pageSelectedIds);
+    onApply(action);
+    onSelectionChange([]);
   };
 
   if (selectedIds.length === 0) {
@@ -141,8 +139,10 @@ export function BulkActionBar({
           />
           <Button
             leftSection={<IconUser size={16} />}
-            disabled={disabled}
-            onClick={() => apply({ kind: "change_assignee", assignee })}
+            disabled={disabled || !assignee.trim()}
+            onClick={() =>
+              apply({ kind: "change_assignee", assignee: assignee.trim() })
+            }
           >
             Assign
           </Button>

@@ -37,6 +37,13 @@ describe("assignee-workload", () => {
     expect(groups.get("bob")?.length).toBe(1);
   });
 
+  it("buckets tasks with missing assignee as unassigned", () => {
+    const groups = groupTasksByAssignee([
+      makeTask({ id: 9, title: "No assignee", assignee: undefined }),
+    ]);
+    expect(groups.get("unassigned")?.length).toBe(1);
+  });
+
   it("builds workload summary rows", () => {
     const summary = buildAssigneeWorkload(tasks, {
       nowIso: "2026-01-01T00:00:00.000Z",
@@ -44,6 +51,21 @@ describe("assignee-workload", () => {
     expect(summary.totalAssignees).toBe(2);
     expect(summary.rows.length).toBe(2);
     expect(findHeaviestAssignee(summary)?.assignee).toBeTruthy();
+  });
+
+  it("marks past-due open tasks as overdue using ISO day comparison", () => {
+    const summary = buildAssigneeWorkload(
+      [
+        makeTask({
+          id: 10,
+          title: "Overdue",
+          dueDate: "2025-12-01T00:00:00.000Z",
+          status: TaskStatus.IN_PROGRESS,
+        }),
+      ],
+      { nowIso: "2026-01-01T00:00:00.000Z" }
+    );
+    expect(summary.rows[0]?.overdueCount).toBe(1);
   });
 
   it("formats workload export text", () => {

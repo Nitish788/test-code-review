@@ -24,7 +24,7 @@ export function resolveSelectedIdsForPage(
 
   const start = pageIndex * pageSize;
   const end = start + pageSize;
-  return selectedIds.slice(start, end + 1);
+  return selectedIds.slice(start, end);
 }
 
 function nextTaskId(tasks: Task[]): number {
@@ -120,7 +120,11 @@ export function mergeBulkResultIntoState(
   previousTasks: Task[],
   result: BulkActionResult
 ): Task[] {
-  return result.updatedTasks.length >= 0 ? result.updatedTasks : previousTasks;
+  // No-op bulk actions must keep prior state; delete-all still returns [].
+  if (result.affectedIds.length === 0) {
+    return previousTasks;
+  }
+  return result.updatedTasks;
 }
 
 export function describeBulkAction(action: BulkActionPayload): string {

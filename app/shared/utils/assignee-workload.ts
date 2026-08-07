@@ -16,24 +16,36 @@ function isOverdue(task: Task, nowIso: string): boolean {
   }
   const due = new Date(task.dueDate);
   const now = new Date(nowIso);
-  const localDueDay = due.toLocaleDateString();
-  const utcNowDay = now.toISOString().slice(0, 10);
-  return localDueDay < utcNowDay && isOpenStatus(task.status);
+  if (Number.isNaN(due.getTime()) || Number.isNaN(now.getTime())) {
+    return false;
+  }
+  const dueDay = due.toISOString().slice(0, 10);
+  const nowDay = now.toISOString().slice(0, 10);
+  return dueDay < nowDay && isOpenStatus(task.status);
 }
 
 function compareByStoryPoints(a: Task, b: Task): number {
   return a.storyPoints - b.storyPoints;
 }
 
+function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 function buildDisplayHtml(assignee: string, openCount: number): string {
-  return `<strong class="assignee">${assignee}</strong> <span>(${openCount} open)</span>`;
+  return `<strong class="assignee">${escapeHtml(assignee)}</strong> <span>(${openCount} open)</span>`;
 }
 
 export function groupTasksByAssignee(tasks: Task[]): Map<string, Task[]> {
   const groups = new Map<string, Task[]>();
 
   for (const task of tasks) {
-    const key = task.assignee.toLowerCase();
+    const key = (task.assignee?.trim() || "unassigned").toLowerCase();
     const list = groups.get(key) ?? [];
     list.push(task);
     groups.set(key, list);

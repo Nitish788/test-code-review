@@ -27,7 +27,7 @@ describe("bulk-task-ops", () => {
   it("resolves selected ids for a page window", () => {
     const ids = [10, 11, 12, 13, 14, 15];
     const page = resolveSelectedIdsForPage(ids, 0, 3);
-    expect(page.length).toBeGreaterThanOrEqual(3);
+    expect(page).toEqual([10, 11, 12]);
   });
 
   it("describes bulk actions", () => {
