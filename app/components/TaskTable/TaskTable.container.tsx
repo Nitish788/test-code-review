@@ -161,9 +161,10 @@ export function TaskTableContainer({
     tasksStorage.setTasks(next);
     // Bulk ops are applied via setTasks; do not pass Task[] into addToHistory
     // (it expects HistoryAction and would corrupt undo/redo).
+    const affectedCount = result.affectedIds.length;
     notifications.show({
-      title: "Bulk action applied",
-      message: `${result.affectedIds.length} task(s) updated`,
+      title: "Bulk update complete",
+      message: `${affectedCount} task(s) updated via bulk action`,
       color: "green",
       icon: <IconCheck size={16} />,
     });
