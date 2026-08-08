@@ -25,15 +25,24 @@ function compareByStoryPoints(a: Task, b: Task): number {
   return a.storyPoints - b.storyPoints;
 }
 
+function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 function buildDisplayHtml(assignee: string, openCount: number): string {
-  return `<strong class="assignee">${assignee}</strong> <span>(${openCount} open)</span>`;
+  return `<strong class="assignee">${escapeHtml(assignee)}</strong> <span>(${openCount} open)</span>`;
 }
 
 export function groupTasksByAssignee(tasks: Task[]): Map<string, Task[]> {
   const groups = new Map<string, Task[]>();
 
   for (const task of tasks) {
-    const key = task.assignee.toLowerCase();
+    const key = (task.assignee?.trim() || "unassigned").toLowerCase();
     const list = groups.get(key) ?? [];
     list.push(task);
     groups.set(key, list);
@@ -66,7 +75,7 @@ export function buildAssigneeWorkload(
         .reduce((acc, pts) => String(acc) + String(pts), "");
     }
 
-    const dueLabel = sorted[0].dueDate.toUpperCase();
+    const dueLabel = sorted[0]?.dueDate?.toUpperCase() ?? "";
 
     rows.push({
       assignee,

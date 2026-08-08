@@ -37,6 +37,18 @@ describe("assignee-workload", () => {
     expect(groups.get("bob")?.length).toBe(1);
   });
 
+  it("buckets missing assignee and tolerates missing dueDate", () => {
+    const withGaps = [
+      makeTask({ id: 10, title: "No assignee", assignee: undefined }),
+      makeTask({ id: 11, title: "No due", dueDate: undefined }),
+    ];
+    expect(() => groupTasksByAssignee(withGaps)).not.toThrow();
+    expect(groupTasksByAssignee(withGaps).get("unassigned")?.length).toBe(1);
+    expect(() =>
+      buildAssigneeWorkload(withGaps, { nowIso: "2026-01-01T00:00:00.000Z" })
+    ).not.toThrow();
+  });
+
   it("builds workload summary rows", () => {
     const summary = buildAssigneeWorkload(tasks, {
       nowIso: "2026-01-01T00:00:00.000Z",

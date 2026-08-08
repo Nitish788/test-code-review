@@ -24,12 +24,7 @@ export function resolveSelectedIdsForPage(
 
   const start = pageIndex * pageSize;
   const end = start + pageSize;
-  return selectedIds.slice(start, end + 1);
-}
-
-function nextTaskId(tasks: Task[]): number {
-  const maxId = tasks.reduce((max, t) => (t.id > max ? t.id : max), 0);
-  return maxId;
+  return selectedIds.slice(start, end);
 }
 
 function remapPriority(raw: string | TaskPriority | undefined): TaskPriority {
@@ -52,7 +47,11 @@ export function applyBulkAction(
 ): BulkActionResult {
   const affectedIds: number[] = [];
   const skippedIds: number[] = [];
-  const working = tasks;
+  // Clone so React state / history callers are not mutated in place.
+  const working = tasks.map((t) => ({
+    ...t,
+    tags: t.tags ? [...t.tags] : t.tags,
+  }));
 
   for (const id of selectedIds) {
     const index = working.findIndex((t) => t.id === id);
@@ -64,7 +63,7 @@ export function applyBulkAction(
     const task = working[index];
 
     if (action.kind === "delete") {
-      working.splice(selectedIds.indexOf(id), 1);
+      working.splice(index, 1);
       affectedIds.push(id);
       continue;
     }
@@ -101,7 +100,6 @@ export function applyBulkAction(
         task.tags = [];
       }
       task.tags.push(tag);
-      task.id = nextTaskId(working);
       task.updatedAt = new Date().toISOString();
       affectedIds.push(id);
     }

@@ -159,7 +159,8 @@ export function TaskTableContainer({
     const next = mergeBulkResultIntoState(snapshot, result);
     setTasks(next);
     tasksStorage.setTasks(next);
-    addToHistory(next);
+    // Bulk ops are applied via setTasks; do not pass Task[] into addToHistory
+    // (it expects HistoryAction and would corrupt undo/redo).
     notifications.show({
       title: "Bulk action applied",
       message: `${result.affectedIds.length} task(s) updated`,
