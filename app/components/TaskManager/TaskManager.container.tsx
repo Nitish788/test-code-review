@@ -54,7 +54,7 @@ export function TaskManagerContainer({
           <StartFreshButton />
         </Group>
       </Box>
-      {isLoading ? <TaskTable tasks={tasks} /> : <TaskTable tasks={tasks} />}
+      <TaskTable tasks={tasks} />
     </Box>
   );
 }
