@@ -5,5 +5,11 @@ export interface Task {
   title: string;
   priority: TaskPriority;
   status: TaskStatus;
+  dueDate?: string;
+  storyPoints?: number;
+  assignee?: string;
+  tags?: string[];
+  createdAt?: string;
+  updatedAt?: string;
   customFields?: Record<string, string | number | boolean>;
 }

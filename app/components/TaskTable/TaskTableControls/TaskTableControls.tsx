@@ -1,7 +1,7 @@
 "use client";
 
-import { Group, MultiSelect, TextInput } from "@mantine/core";
-import { IconSearch } from "@tabler/icons-react";
+import { Group, MultiSelect, TextInput, Button } from "@mantine/core";
+import { IconSearch, IconX } from "@tabler/icons-react";
 import { useMemo } from "react";
 import styles from "../TaskTable.module.css";
 
@@ -12,6 +12,8 @@ interface TaskTableControlsProps {
   onPrioritiesChange: (values: string[]) => void;
   selectedStatuses: string[];
   onStatusesChange: (values: string[]) => void;
+  searchAssignee: string;
+  onSearchAssigneeChange: (value: string) => void;
 }
 
 export function TaskTableControls({
@@ -21,6 +23,8 @@ export function TaskTableControls({
   onPrioritiesChange,
   selectedStatuses,
   onStatusesChange,
+  searchAssignee,
+  onSearchAssigneeChange,
 }: TaskTableControlsProps) {
   const priorityOptions = useMemo(
     () => [
@@ -41,6 +45,15 @@ export function TaskTableControls({
     ],
     []
   );
+
+  const hasFilters = searchQuery || selectedPriorities.length > 0 || selectedStatuses.length > 0 || searchAssignee;
+
+  const handleClearFilters = () => {
+    onSearchChange("");
+    onPrioritiesChange([]);
+    onStatusesChange([]);
+    onSearchAssigneeChange("");
+  };
 
   return (
     <Group
@@ -74,6 +87,25 @@ export function TaskTableControls({
         clearable
         aria-label="Filter tasks by status"
       />
+      <TextInput
+        className={styles.filterSelect}
+        placeholder="Filter by assignee"
+        value={searchAssignee}
+        onChange={(e) => onSearchAssigneeChange(e.target.value)}
+        leftSection={<IconSearch size={16} />}
+        aria-label="Filter tasks by assignee"
+      />
+      {hasFilters && (
+        <Button 
+          variant="subtle" 
+          color="gray" 
+          size="sm" 
+          onClick={handleClearFilters}
+          leftSection={<IconX size={14} />}
+        >
+          Clear
+        </Button>
+      )}
     </Group>
   );
 }

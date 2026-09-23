@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { ActionIcon, Group, Tooltip } from "@mantine/core";
+import { ActionIcon, Group, Tooltip, Badge, Avatar } from "@mantine/core";
 import { IconEdit, IconTrash } from "@tabler/icons-react";
 import type { Task } from "@/app/shared/types/task";
 import type { CustomField } from "@/app/shared/types/custom-field";
@@ -45,6 +45,57 @@ export function TaskTablePresentation({
             {task.priority}
           </span>
         ),
+        sortable: true,
+      },
+      {
+        key: "storyPoints",
+        header: "Points",
+        render: (task: Task) => task.storyPoints || "-",
+        sortable: true,
+      },
+      {
+        key: "dueDate",
+        header: "Due Date",
+        render: (task: Task) => task.dueDate || "-",
+        sortable: true,
+      },
+      {
+        key: "assignee",
+        header: "Assignee",
+        render: (task: Task) =>
+          task.assignee ? (
+            <Group gap="xs">
+              <Avatar size="sm" radius="xl" color="blue">
+                {task.assignee.charAt(0).toUpperCase()}
+              </Avatar>
+              {task.assignee}
+            </Group>
+          ) : (
+            "-"
+          ),
+        sortable: true,
+      },
+      {
+        key: "tags",
+        header: "Tags",
+        render: (task: Task) =>
+          task.tags && task.tags.length > 0 ? (
+            <Group gap={4}>
+              {task.tags.map((tag) => (
+                <Badge key={tag} size="sm" variant="light">
+                  {tag}
+                </Badge>
+              ))}
+            </Group>
+          ) : (
+            "-"
+          ),
+      },
+      {
+        key: "updatedAt",
+        header: "Last Updated",
+        render: (task: Task) =>
+          task.updatedAt ? new Date(task.updatedAt).toLocaleDateString() : "-",
         sortable: true,
       },
       {

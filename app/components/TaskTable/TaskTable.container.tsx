@@ -56,6 +56,10 @@ export function TaskTableContainer({
     const savedState = filterStorage.getFilterState();
     return savedState.selectedStatuses || [];
   });
+  const [searchAssignee, setSearchAssignee] = useState<string>(() => {
+    const savedState = filterStorage.getFilterState();
+    return savedState.searchAssignee || "";
+  });
   const [sortColumn, setSortColumn] = useState<string | undefined>(() => {
     const savedState = filterStorage.getFilterState();
     return savedState.sortColumn;
@@ -98,10 +102,13 @@ export function TaskTableContainer({
         selectedPriorities.includes(task.priority);
       const matchesStatus =
         selectedStatuses.length === 0 || selectedStatuses.includes(task.status);
+      const matchesAssignee =
+        !searchAssignee ||
+        task.assignee?.toLowerCase().includes(searchAssignee.toLowerCase());
 
-      return matchesSearch && matchesPriority && matchesStatus;
+      return matchesSearch && matchesPriority && matchesStatus && matchesAssignee;
     });
-  }, [tasks, searchQuery, selectedPriorities, selectedStatuses, view]);
+  }, [tasks, searchQuery, selectedPriorities, selectedStatuses, searchAssignee, view]);
 
   const paginatedTasks = useMemo(() => {
     const startIndex = (currentPage - 1) * pageSize;
@@ -151,6 +158,18 @@ export function TaskTableContainer({
         bValue = String(bCustom);
       }
 
+      if (column === "storyPoints") {
+        const valA = Number(a.storyPoints || 0);
+        const valB = Number(b.storyPoints || 0);
+        return isAsc ? valA - valB : valB - valA;
+      }
+
+      if (column === "assignee") {
+        const valA = String(a.assignee || "");
+        const valB = String(b.assignee || "");
+        return isAsc ? valA.localeCompare(valB) : valB.localeCompare(valA);
+      }
+
       if (column === "priority") {
         const priorityA = PRIORITY_ORDER[aValue as keyof typeof PRIORITY_ORDER];
         const priorityB = PRIORITY_ORDER[bValue as keyof typeof PRIORITY_ORDER];
@@ -177,6 +196,8 @@ export function TaskTableContainer({
     const taskWithId: Task = {
       ...newTask,
       id: Math.max(...tasks.map((t) => t.id), 0) + 1,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     };
     addToHistory({
       type: "CREATE",
@@ -201,7 +222,9 @@ export function TaskTableContainer({
 
   const handleUpdateTask = (taskData: Omit<Task, "id"> | Task) => {
     const task =
-      "id" in taskData ? taskData : { ...taskData, id: editingTask!.id };
+      "id" in taskData
+        ? { ...taskData, updatedAt: new Date().toISOString() }
+        : { ...taskData, id: editingTask!.id, updatedAt: new Date().toISOString() };
     console.log("Updating task:", task);
     const updatedTasks = tasks.map((t) => (t.id === task.id ? task : t));
     setTasks(updatedTasks);
@@ -338,6 +361,11 @@ export function TaskTableContainer({
     setCurrentPage(1);
   };
 
+  const handleAssigneeSearchChange = (value: string) => {
+    setSearchAssignee(value);
+    setCurrentPage(1);
+  };
+
   useEffect(() => {
     customFieldsStorage.setCustomFields(customFields);
   }, [customFields]);
@@ -348,6 +376,7 @@ export function TaskTableContainer({
         searchQuery,
         selectedPriorities,
         selectedStatuses,
+        searchAssignee,
         sortColumn,
         sortDirection,
         currentPage,
@@ -415,6 +444,8 @@ export function TaskTableContainer({
             onPrioritiesChange={handlePrioritiesChange}
             selectedStatuses={selectedStatuses}
             onStatusesChange={handleStatusesChange}
+            searchAssignee={searchAssignee}
+            onSearchAssigneeChange={handleAssigneeSearchChange}
           />
           <TaskTablePresentation
             tasks={paginatedTasks}

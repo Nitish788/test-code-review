@@ -11,8 +11,10 @@ import {
   Skeleton,
   TextInput,
   MultiSelect,
+  Badge,
+  Avatar,
 } from "@mantine/core";
-import { IconPlus, IconTrash, IconSearch } from "@tabler/icons-react";
+import { IconPlus, IconTrash, IconSearch, IconCalendar, IconUser } from "@tabler/icons-react";
 import { DragEvent } from "react";
 import styles from "./KanbanBoard.module.css";
 import type { ColumnConfig } from "./KanbanBoard.types";
@@ -164,6 +166,43 @@ export function KanbanBoardPresentation({
                         <Text size="xs" c="dimmed" className={styles.status}>
                           {task.status.replace("_", " ")}
                         </Text>
+                        {task.dueDate && (
+                          <Group gap="xs" mt={4}>
+                            <IconCalendar size={12} style={{ color: "#868e96" }} />
+                            <Text size="xs" c="dimmed">
+                              {task.dueDate}
+                            </Text>
+                          </Group>
+                        )}
+                        {task.storyPoints && (
+                          <Badge size="xs" variant="outline" mt={4}>
+                            {task.storyPoints} pts
+                          </Badge>
+                        )}
+                        {task.assignee && (
+                          <Group gap="xs" mt={4}>
+                            <Avatar size="xs" radius="xl" color="blue">
+                              {task.assignee.charAt(0).toUpperCase()}
+                            </Avatar>
+                            <Text size="xs" c="dimmed">
+                              {task.assignee}
+                            </Text>
+                          </Group>
+                        )}
+                        {task.tags && task.tags.length > 0 && (
+                          <Group gap={4} mt={4}>
+                            {task.tags.map((tag) => (
+                              <Badge key={tag} size="xs" variant="light" color="gray">
+                                {tag}
+                              </Badge>
+                            ))}
+                          </Group>
+                        )}
+                        {task.updatedAt && (
+                          <Text size="xs" c="dimmed" mt={4} style={{ fontSize: "10px" }}>
+                            Updated: {new Date(task.updatedAt).toLocaleDateString()}
+                          </Text>
+                        )}
                       </div>
                       <Button
                         variant="subtle"

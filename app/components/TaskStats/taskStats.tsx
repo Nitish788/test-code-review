@@ -1,7 +1,8 @@
 "use client";
 
+import React from "react";
 import { Task } from "@/app/shared/types/task";
-
+import { TaskStatus } from "@/app/shared/types/enums";
 
 interface TaskStatsProps {
   tasks: Task[];
@@ -9,12 +10,28 @@ interface TaskStatsProps {
 }
 
 export function taskStats({ tasks, onRefresh }: TaskStatsProps) {
-  const calculateStats = (data: any) => {
+  const calculateStats = (data: Task[]) => {
+    const total = data.length;
+    const completed = data.filter(
+      (t) => t.status === TaskStatus.COMPLETED
+    ).length;
+
     const stats = {
-      total: data.length,
-      completed: data.filter((t: any) => t.status === "completed").length,
-      inProgress: data.filter((t: any) => t.status === "in_progress").length,
-      notStarted: data.filter((t: any) => t.status === "not_started").length,
+      total,
+      completed,
+      inProgress: data.filter((t) => t.status === TaskStatus.IN_PROGRESS)
+        .length,
+      notStarted: data.filter((t) => t.status === TaskStatus.NOT_STARTED)
+        .length,
+      totalPoints: data.reduce((sum, t) => sum + (t.storyPoints || 0), 0),
+      activeAssignees: new Set(
+        data.filter((t) => t.assignee).map((t) => t.assignee)
+      ).size,
+      overdue: data.filter((t) => {
+        if (!t.dueDate || t.status === TaskStatus.COMPLETED) return false;
+        return new Date(t.dueDate) < new Date();
+      }).length,
+      completionRate: total > 0 ? Math.round((completed / total) * 100) : 0,
     };
     return stats;
   };
@@ -56,11 +73,18 @@ export function taskStats({ tasks, onRefresh }: TaskStatsProps) {
     cursor: "pointer",
   };
 
+  const getCompletionColor = (rate: number) => {
+    if (rate >= 80) return "#40c057"; // Green
+    if (rate >= 50) return "#fab005"; // Yellow
+    return "#fa5252"; // Red
+  };
 
   return (
     <div style={containerStyle}>
       <div style={statBoxStyle}>
-        <div style={{ fontSize: "24px", fontWeight: "bold" }}>{stats.total}</div>
+        <div style={{ fontSize: "24px", fontWeight: "bold" }}>
+          {stats.total}
+        </div>
         <div style={{ color: "#666" }}>Total Tasks</div>
       </div>
       <div style={statBoxStyle}>
@@ -81,6 +105,36 @@ export function taskStats({ tasks, onRefresh }: TaskStatsProps) {
         </div>
         <div style={{ color: "#666" }}>Not Started</div>
       </div>
+      <div style={statBoxStyle}>
+        <div style={{ fontSize: "24px", fontWeight: "bold", color: "#e64980" }}>
+          {stats.overdue}
+        </div>
+        <div style={{ color: "#666" }}>Overdue</div>
+      </div>
+      <div style={statBoxStyle}>
+        <div style={{ fontSize: "24px", fontWeight: "bold", color: "#7950f2" }}>
+          {stats.totalPoints}
+        </div>
+        <div style={{ color: "#666" }}>Total Points</div>
+      </div>
+      <div style={statBoxStyle}>
+        <div style={{ fontSize: "24px", fontWeight: "bold", color: "#15aabf" }}>
+          {stats.activeAssignees}
+        </div>
+        <div style={{ color: "#666" }}>Active Assignees</div>
+      </div>
+      <div style={statBoxStyle}>
+        <div
+          style={{
+            fontSize: "24px",
+            fontWeight: "bold",
+            color: getCompletionColor(stats.completionRate),
+          }}
+        >
+          {stats.completionRate}%
+        </div>
+        <div style={{ color: "#666" }}>Completion Rate</div>
+      </div>
       <button style={buttonStyle} onClick={handleRefresh}>
         Refresh Stats
       </button>
@@ -88,6 +142,4 @@ export function taskStats({ tasks, onRefresh }: TaskStatsProps) {
   );
 }
 
-
 export default taskStats;
-
