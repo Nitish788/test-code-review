@@ -1,7 +1,14 @@
 "use client";
 
 import { useMemo } from "react";
-import { ActionIcon, Group, Tooltip, Badge, Avatar } from "@mantine/core";
+import {
+  ActionIcon,
+  Group,
+  Tooltip,
+  Badge,
+  Avatar,
+  Checkbox,
+} from "@mantine/core";
 import { IconEdit, IconTrash } from "@tabler/icons-react";
 import type { Task } from "@/app/shared/types/task";
 import type { CustomField } from "@/app/shared/types/custom-field";
@@ -18,6 +25,9 @@ interface TaskTablePresentationProps {
   sortDirection?: "asc" | "desc";
   onSort?: (column: string) => void;
   customFields: CustomField[];
+  selectedIds?: number[];
+  onToggleSelect?: (taskId: number) => void;
+  onToggleSelectAll?: (checked: boolean) => void;
 }
 
 export function TaskTablePresentation({
@@ -28,9 +38,34 @@ export function TaskTablePresentation({
   sortDirection,
   onSort,
   customFields,
+  selectedIds = [],
+  onToggleSelect,
+  onToggleSelectAll,
 }: TaskTablePresentationProps) {
+  const allSelected =
+    tasks.length > 0 && tasks.every((t) => selectedIds.includes(t.id));
+
   const columns = useMemo(
     () => [
+      {
+        key: "select",
+        header: (
+          <Checkbox
+            aria-label="Select all tasks on page"
+            checked={allSelected}
+            onChange={(e) => onToggleSelectAll?.(e.currentTarget.checked)}
+          />
+        ),
+        render: (task: Task) => (
+          <Checkbox
+            aria-label={`Select task ${task.id}`}
+            checked={selectedIds.includes(task.id)}
+            onChange={() => onToggleSelect?.(task.id)}
+            onClick={(e) => e.stopPropagation()}
+          />
+        ),
+        sortable: false,
+      },
       {
         key: "title",
         header: "Title",
@@ -155,7 +190,15 @@ export function TaskTablePresentation({
         ),
       },
     ],
-    [customFields, onEdit, onDelete]
+    [
+      customFields,
+      onEdit,
+      onDelete,
+      selectedIds,
+      onToggleSelect,
+      onToggleSelectAll,
+      allSelected,
+    ]
   );
 
   return (
